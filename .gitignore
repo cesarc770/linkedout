@@ -2,7 +2,7 @@
 node_modules
 .DS_Store
 .env
-
+.idea/
 # Created by .ignore support plugin (hsz.mobi)
 ### Node template
 # Logs

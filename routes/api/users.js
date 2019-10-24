@@ -7,19 +7,17 @@ let MongoStore = require("connect-mongo")(session);
 
 const AWS = require('aws-sdk');
 const multer = require('multer');
-const S3_BUCKET = "devspot";
-const S3_REGION = "us-east-2";
-const URL_PREFIX = "http://" + S3_BUCKET + ".s3." + S3_REGION + ".amazonaws.com/";
+const S3_BUCKET = "linekdoutv2";
+const S3_REGION = "us-west-2";
+const URL_PREFIX = "http://s3." + S3_REGION + ".amazonaws.com/"+ S3_BUCKET;
 
 const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 
-AWS.config.update(
-    {
-        accessKeyId: AWS_ACCESS_KEY_ID,
-        secretAccessKey: AWS_SECRET_ACCESS_KEY,
-        region: S3_REGION
-    });
+
+AWS.config.accessKeyId = AWS_ACCESS_KEY_ID;
+AWS.config.secretAccessKey = AWS_SECRET_ACCESS_KEY;
+AWS.config.region = S3_REGION;
 const s3 = new AWS.S3();
 
 // Multer config
@@ -72,9 +70,7 @@ router.post("/", upload.single('theseNamesMustMatch'), (req, res) => {
                     console.log(err);
                     return res.status(400).send(err);
                 }
-                let url = URL_PREFIX + keyname;
-                console.log("... url set... ");
-                console.log(url);
+                let url = URL_PREFIX + "/" + keyname;
                 db.user
                     .findOneAndUpdate({_id: userId}, {$set:{image_url: url}}, {new: true})
                     .then(dbUpdate => {
@@ -117,8 +113,6 @@ router.put("/img", upload.single('theseNamesMustMatch'), (req, res) => {
                     return res.status(400).send(err);
                 }
                 let url = URL_PREFIX + keyname;
-                console.log("... url set... ");
-                console.log(url);
                 db.user
                     .findOneAndUpdate({_id: userId}, {$set:{image_url: url}}, {new: true})
                     .then(dbUpdate => {
